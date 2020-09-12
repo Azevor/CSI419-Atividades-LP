@@ -45,3 +45,12 @@ isPart(H, [_|T]) :-
 * insertHead(Elemento, Lista, Lista_Com_Elemento)
 */
 insertHead(X, L, [X|L]).
+
+% Verificar se lista é subconjunto de outra lista
+/* ENTRADA:
+* isSubGroup(SubLista, Lista)
+*/
+isSubGroup([], _).
+isSubGroup([H|T], L) :-
+    isPart(H, L),
+    isSubGroup(T, L).

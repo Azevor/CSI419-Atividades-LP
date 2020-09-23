@@ -1,16 +1,130 @@
+%%%%% ALGUMAS DEFINIÇÕES PARA FUNCIONALIDADES DIVERSAS %%%%%
+
 /*
-* Organiza a tela ("limpar" tela)
+* Organiza a tela ("limpar" tela).
 */
 limpar :-
     write('\33\[2J').
 
+/* 
+* Número referente ao mês de referência.
+*/
+num_mes(janeiro,1).
+num_mes(fevereiro,2).
+num_mes(marco,3).
+num_mes(abril,4).
+num_mes(maio,5).
+num_mes(junho,6).
+num_mes(julho,7).
+num_mes(agosto,8).
+num_mes(setembro,9).
+num_mes(outubro,10).
+num_mes(novembro,11).
+num_mes(dezembro,12).
+
+/*
+* Retorna o valor da chave referente ao TimeStamp (data/hora).
+* (Ex.: parâmetro _Valor_ como: day; month; year; hour; minute; second).
+*/
+data_atual(Chave,Valor) :- 
+	get_time(Stamp),
+	stamp_date_time(Stamp, Data, local),
+	date_time_value(Chave, Data, Valor).
+
+/*
+* Somar elementos da lista.
+*/
+soma_lista([],0).
+soma_lista([H|T],S) :- 
+	soma_lista(T,T2),
+	S is H+T2.
+
+/*
+* Contar elementos da lista.
+*/
+tamanho_lista([],0).
+tamanho_lista([_|T],N) :- 
+	tamanho_lista(T,T2),
+	N is T2+1.
+
+
+/*
+* Calcular média dos valores de uma lista.
+*/
+media_lista(Lista,Media) :- 
+	soma_lista(Lista,Soma),
+	tamanho_lista(Lista,Tamanho),
+	Media is Soma/Tamanho.
+
+/*
+* Listar tamanhos de uma sublista.
+* Exemplo: entrada = [[1,2,3],[3,4,5],[a,e,i,o,u]]
+* saida = [3,3,5]
+*/
+tamanhos_sublista([],[]).
+tamanhos_sublista([H|T],ListaTamanhos) :-
+    tamanhos_sublista(T,F),
+    tamanho_lista(H,Tam),
+    ListaTamanhos = [Tam|F].
+
+/*
+* Imprime itens da lista
+*/
+imprime([]).
+imprime([H|T]) :- 
+	write(H),nl,imprime(T).
+
+
 % ----------------------------------------------------------------------------------------------- %
 
+%%%%% FATOS E PROPOSIÇÕES GERAIS %%%%%
+
+/*
+* Membros da familia.
+* Nome e data de nascimento.
+*/
+membro(philip,datanasc(10,junho,1921)).
+membro(charles,datanasc(14,novembro,1948)).
+membro(mark_Philips,datanasc(22,setembro,1948)).
+membro(timothy,datanasc(1,marco,1955)).
+membro(andrew,datanasc(19,fevereiro,1960)).
+membro(edward,datanasc(10,marco,1964)).
+membro(peter_Philips,datanasc(15,novembro,1977)).
+membro(mike,datanasc(18,outubro,1978)).
+membro(william,datanasc(21,junho,1982)).
+membro(harry,datanasc(15,setembro,1984)).
+membro(jack,datanasc(3,maio,1986)).
+membro(james,datanasc(17,dezembro,2007)).
+membro(george,datanasc(22,julho,2013)).
+membro(louis,datanasc(23,abril,2018)).
+membro(archie,datanasc(6,maio,2019)).
+membro(elizabeth_II,datanasc(21,abril,1926)).
+membro(diana,datanasc(1,julho,1961)).%faleceu: 31,agosto,1997
+membro(camilla,datanasc(17,julho,1947)).
+membro(anne,datanasc(15,agosto,1950)).
+membro(sarah,datanasc(15,outubro,1959)).
+membro(sophie,datanasc(20,janeiro,1965)).
+membro(autumn,datanasc(3,maio,1978)).
+membro(zara,datanasc(15,maio,1981)).
+membro(catherine,datanasc(9,janeiro,1982)).
+membro(meghan,datanasc(4,agosto,1981)).
+membro(beatrice,datanasc(8,agosto,1988)).
+membro(eugenie,datanasc(23,marco,1990)).
+membro(louise,datanasc(8,novembro,2003)).
+membro(charlotte,datanasc(2,maio,2015)).
+membro(savannah,datanasc(19,dezembro,2010)).
+membro(isla,datanasc(29,marco,2012)).
+membro(mia,datanasc(17,janeiro,2014)).
+membro(lena,datanasc(18,junho,2018)).
+
+/*
+* Genitores.
+*/
 pai(philip,charles).
 pai(philip,anne).
 pai(philip,andrew).
 pai(philip,edward).
-pai(charles,willian).
+pai(charles,william).
 pai(charles,harry).
 pai(mark_Philips,peter_Philips).
 pai(mark_Philips,zara).
@@ -18,9 +132,9 @@ pai(andrew,beatrice).
 pai(andrew,eugenie).
 pai(edward,louise).
 pai(edward,james).
-pai(willian,george).
-pai(willian,charlotte).
-pai(willian,louis).
+pai(william,george).
+pai(william,charlotte).
+pai(william,louis).
 pai(harry,archie).
 pai(peter_Philips,savannah).
 pai(peter_Philips,isla).
@@ -31,7 +145,7 @@ mae(elizabeth_II,charles).
 mae(elizabeth_II,anne).
 mae(elizabeth_II,andrew).
 mae(elizabeth_II,edward).
-mae(diana,willian).
+mae(diana,william).
 mae(diana,harry).
 mae(anne,peter_Philips).
 mae(anne,zara).
@@ -48,47 +162,109 @@ mae(autumn_Philips,isla).
 mae(zara,mia).
 mae(zara,lena).
 
+/*
+* Membros casados.
+* Primeiro parâmetro se refere ao membro direto da família.
+* Segundo parâmetro se refere ao cônjude não nobre.
+*/
 casados(elizabeth_II,philip).
 casados(charles,camilla).
 casados(anne,timothy).
 casados(andrew,sarah).
 casados(edward,sophie).
-casados(willian,catherine).
+casados(william,catherine).
 casados(harry,meghan).
 casados(peter_Philips,autumn_Philips).
 casados(zara,mike).
 casados(eugenie,jack).
 
-idade(elizabeth_II,94).
-idade(philip,99).
-idade(charles,71).
-idade(diana,36).
-idade(camilla,73).
-idade(anne,70).
-idade(mark_Philips,71).
-idade(timothy,65).
-idade(andrew,60).
-idade(sarah,60).
-idade(edward,56).
-idade(sophie,55).
-idade(willian,38).
-idade(catherine,38).
-idade(harry,36).
-idade(meghan,39).
-idade(peter_Philips,42).
-idade(autumn_Philips,42).
-idade(zara,39).
-idade(mike,39).
-idade(beatrice,32).
-idade(eugenie,30).
-idade(jack,34).
-idade(louise,16).
-idade(james,12).
-idade(george,7).
-idade(charlotte,5).
-idade(louis,2).
-idade(archie,1).
-idade(savannah,9).
-idade(isla,8).
-idade(mia,6).
-idade(lena,1)
+/*
+* Idade de um membro.
+*/
+idade(Membro, Idade) :-
+    membro(Membro,datanasc(D,M,Y)),
+    data_atual(day,Day),
+    data_atual(month,Month),
+    data_atual(year,Year),
+    num_mes(M,Mes),
+    Dif_entre_datas is (Year*365+Month*30+Day)-(Y*365+Mes*30+D),
+    Idade is Dif_entre_datas//365.
+
+/*
+* Genitor (pai ou mae) de um membro.
+*/
+genitor(G,F) :-
+    pai(G,F).
+genitor(G,F) :-
+    mae(G,F).
+
+/*
+* Avô/Avó A de N.
+*/
+avo(A,N) :-
+    genitor(A,M),
+    genitor(M,N).
+
+/*
+* Verifica idade do neto de um membro.
+*/
+idade_neto(Avo,Neto,Idade) :-
+    avo(Avo,Neto),
+    idade(Neto,Idade).
+
+/*
+* Calcula a média da lista de idades dos netos de um membro.
+*/
+idade_media_netos(Avo,MediaIdades) :-
+    findall(Idade,idade_neto(Avo,_,Idade),ListaIdades),
+    media_lista(ListaIdades,MediaIdades).
+
+/*
+* Verifica neto mais novo.
+*/
+neto_mais_novo(Avo,Neto) :-
+    findall(Idade,idade_neto(Avo,_,Idade),ListaIdades),
+    min_list(ListaIdades,MenorIdade),
+    idade_neto(Avo,Neto,MenorIdade).
+
+/*
+* Lista de filhos de um membro
+*/
+lista_filhos(Membro,ListaFilhos) :-
+    bagof(Filho,genitor(Membro,Filho),ListaFilhos).
+
+/*
+* Número de filhos de um membro.
+*/
+quantidade_filhos(Membro,Qte) :-
+    lista_filhos(Membro,ListaFilhos),
+    tamanho_lista(ListaFilhos,Qte).
+
+% ----------------------------------------------------------------------------------------------- %
+
+%%%%% CONSULTAS DE RESOLUÇÃO DO TRABALHO PRÁTICO I %%%%%
+
+% Idade dos netos da rainha.
+idade_netos_rainha :-
+    findall(Idade,idade_neto(elizabeth_II,_,Idade),ListaIdades),
+    write("Idade dos netos da rainha:"),nl,
+    imprime(ListaIdades),nl.
+
+% Idade média dos netos da rainha.
+idade_media_netos_rainha :-
+    idade_media_netos(elizabeth_II,Media),
+    write("Idade media dos netos da rainha = "),
+    write(Media).
+
+% Neto mais novo de Charles.
+neto_novo_charles :-
+    neto_mais_novo(charles,Neto),
+    write("Neto mais novo de charles: "),
+    write(Neto),nl.
+
+% Membro com mais filhos
+tem_mais_filhos(Membro) :-
+    findall(Filhos,lista_filhos(_,Filhos),ListaFilhos),
+    tamanhos_sublista(ListaFilhos,ListaTamanhos),
+    max_list(ListaTamanhos,Maior),
+    quantidade_filhos(Membro,Maior).

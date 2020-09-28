@@ -179,7 +179,7 @@ casados(zara,mike).
 casados(eugenie,jack).
 
 /*
-* Idade de um membro.
+* Membro possui determinada idade.
 */
 idade(Membro, Idade) :-
     membro(Membro,datanasc(D,M,Y)),
@@ -199,28 +199,28 @@ genitor(G,F) :-
     mae(G,F).
 
 /*
-* Avô/Avó A de N.
+* Avô/Avó de um membro.
 */
 avo(A,N) :-
     genitor(A,M),
     genitor(M,N).
 
 /*
-* Verifica idade do neto de um membro.
+* Avô/Avó tem neto com determinada idade.
 */
 idade_neto(Avo,Neto,Idade) :-
     avo(Avo,Neto),
     idade(Neto,Idade).
 
 /*
-* Calcula a média da lista de idades dos netos de um membro.
+* Avô/Avó tem netos com determinada média de idades.
 */
 idade_media_netos(Avo,MediaIdades) :-
     findall(Idade,idade_neto(Avo,_,Idade),ListaIdades),
     media_lista(ListaIdades,MediaIdades).
 
 /*
-* Verifica neto mais novo.
+* Avô/Avó possui neto mais novo.
 */
 neto_mais_novo(Avo,Neto) :-
     findall(Idade,idade_neto(Avo,_,Idade),ListaIdades),
@@ -228,17 +228,151 @@ neto_mais_novo(Avo,Neto) :-
     idade_neto(Avo,Neto,MenorIdade).
 
 /*
-* Lista de filhos de um membro
+* Linha sucessora do trono.
+*/
+sucessor(charles,1).
+sucessor(william,2).
+sucessor(george,3).
+sucessor(charlotte,4).
+sucessor(louis,5).
+sucessor(harry,6).
+sucessor(archie,7).
+sucessor(andrew,8).
+sucessor(beatrice,9).
+sucessor(eugenie,10).
+sucessor(edward,11).
+sucessor(james,12).
+sucessor(louise,13).
+sucessor(anne,14).
+sucessor(peter,15).
+sucessor(savannah,16).
+sucessor(isla,17).
+sucessor(zara,18).
+sucessor(mia,19).
+sucessor(lena,20).
+
+sucessor_coroa(M,N) :-
+    sucessor(M,N).
+
+/*
+* Membro possui uma lista de filhos.
 */
 lista_filhos(Membro,ListaFilhos) :-
     bagof(Filho,genitor(Membro,Filho),ListaFilhos).
 
 /*
-* Número de filhos de um membro.
+* Membro possui uma quantidade de filhos.
 */
 quantidade_filhos(Membro,Qte) :-
     lista_filhos(Membro,ListaFilhos),
     tamanho_lista(ListaFilhos,Qte).
+
+/*
+* Membro possui filho mais velho.
+*//*
+filho_mais_velho(Genitor,Filho) :-
+    findall(Idade,(genitor(Genitor,Filho),idade(Filho,Idade)),ListaIdade),
+    max_list(ListaIdade,MaiorIdade),
+    idade(Filho,MaiorIdade).
+*/
+% ----------------------------------------------------------------------------------------------- %
+
+arvore(A) :-
+    A = [
+            elizabeth_II,
+            [
+                diana,
+                [
+                    william,
+                    [
+                        george,charlotte,louis
+                    ],
+                    catherine,harry,
+                    [
+                        archie
+                    ],
+                    meghan
+                ],
+                charles,camilla,mark_Philips,
+                [
+                    autumn,
+                    [
+                        savannah,isla
+                    ],
+                    peter_Philips,zara,
+                    [
+                        mia,lena
+                    ],
+                    mike
+                ],
+                anne,timothy,andrew,
+                [
+                    beatrice,eugenie,jack
+                ],
+                sarah,edward,
+                [
+                    louise,james
+                ],
+                sophie
+            ],
+            philip
+        ].
+
+% Verifica se é uma sublista.
+eh_sublista(L) :-
+    tamanho_lista(L,Tam),
+    Tam > 0.
+
+% Remove um elemento da lista.
+remove(X, [X|T], T).
+remove(X, [H|T], [H|T1]):- remove(X,T,T1).
+
+% Concatenar listas.
+concatenar([], L, L).
+concatenar([H|T], L, [H|D]) :- concatenar(T, L, D).
+
+% Imprime todos os elementos, desprezando sublistas.
+imprimir_nivel([]).
+imprimir_nivel([H|T]) :-
+    \+ eh_sublista(H),
+    write(H),nl,
+    imprimir_nivel(T).
+imprimir_nivel([H|T]) :-
+    eh_sublista(H),
+    imprimir_nivel(T).
+
+% Concatenar listas ou ignorar elemento que não é sublista.
+concatenar_listas(L1,L2,R) :-
+    concatenar(L1,L2,R),!.
+concatenar_listas(_,L,R) :-
+    concatenar([],L,R).
+
+% Remove todos os elementos que não são sublistas.
+remove_elementos([],L,Nivel) :-
+    N1 is Nivel-1,!,
+    arvore_por_nivel(L,N1).
+remove_elementos([H|T],L,Nivel) :-
+    eh_sublista(H),!,
+    concatenar_listas(H,L,L1),
+    remove_elementos(T,L1,Nivel).
+remove_elementos([H|T],L,Nivel) :-
+    \+ tamanho_lista(H,1),
+    remove_elementos(T,L,Nivel).
+
+% Seleciona o nivel.
+arvore_por_nivel(A2,0) :-
+    imprimir_nivel(A2).
+arvore_por_nivel(Arvore,Nivel) :-
+    remove_elementos(Arvore,[],Nivel).
+
+% Chamada da função.
+imprime_arvore(0) :-
+    arvore(A),
+    imprimir_nivel(A).
+imprime_arvore(X) :-
+    X > 0,
+    arvore(A),
+    arvore_por_nivel(A,X).
 
 % ----------------------------------------------------------------------------------------------- %
 
@@ -262,9 +396,16 @@ neto_novo_charles :-
     write("Neto mais novo de charles: "),
     write(Neto),nl.
 
-% Membro com mais filhos
+% Membro com mais filhos.
 tem_mais_filhos(Membro) :-
     findall(Filhos,lista_filhos(_,Filhos),ListaFilhos),
     tamanhos_sublista(ListaFilhos,ListaTamanhos),
     max_list(ListaTamanhos,Maior),
     quantidade_filhos(Membro,Maior).
+
+% Exibe linha de sucessão ao trono.
+linha_sucessora :-
+    sucessor_coroa(S,O),
+    write(O),
+    write(") "),
+    write(S),nl.

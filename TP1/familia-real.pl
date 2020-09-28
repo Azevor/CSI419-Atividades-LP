@@ -74,6 +74,18 @@ imprime([]).
 imprime([H|T]) :- 
 	write(H),nl,imprime(T).
 
+% Verifica se é uma sublista.
+eh_sublista(L) :-
+    tamanho_lista(L,Tam),
+    Tam > 0.
+
+% Remove um elemento da lista.
+remove(X, [X|T], T).
+remove(X, [H|T], [H|T1]):- remove(X,T,T1).
+
+% Concatenar listas.
+concatenar([], L, L).
+concatenar([H|T], L, [H|D]) :- concatenar(T, L, D).
 
 % ----------------------------------------------------------------------------------------------- %
 
@@ -267,16 +279,11 @@ quantidade_filhos(Membro,Qte) :-
     lista_filhos(Membro,ListaFilhos),
     tamanho_lista(ListaFilhos,Qte).
 
-/*
-* Membro possui filho mais velho.
-*//*
-filho_mais_velho(Genitor,Filho) :-
-    findall(Idade,(genitor(Genitor,Filho),idade(Filho,Idade)),ListaIdade),
-    max_list(ListaIdade,MaiorIdade),
-    idade(Filho,MaiorIdade).
-*/
 % ----------------------------------------------------------------------------------------------- %
 
+/**
+ * Árvore que representa a família real britânica
+ */
 arvore(A) :-
     A = [
             elizabeth_II,
@@ -317,19 +324,6 @@ arvore(A) :-
             ],
             philip
         ].
-
-% Verifica se é uma sublista.
-eh_sublista(L) :-
-    tamanho_lista(L,Tam),
-    Tam > 0.
-
-% Remove um elemento da lista.
-remove(X, [X|T], T).
-remove(X, [H|T], [H|T1]):- remove(X,T,T1).
-
-% Concatenar listas.
-concatenar([], L, L).
-concatenar([H|T], L, [H|D]) :- concatenar(T, L, D).
 
 % Imprime todos os elementos, desprezando sublistas.
 imprimir_nivel([]).
